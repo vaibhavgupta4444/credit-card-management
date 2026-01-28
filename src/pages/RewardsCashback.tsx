@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, type FC } from "react";
 import { CommonContext } from "../contexts/commonContext";
 import { CreditCard, Gift, TrendingUp, ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
 import type { RedemptionHistory } from "../types/IRedeem";
 
-const RewardsCashback = () => {
+const RewardsCashback: FC = () => {
   const ctx = useContext(CommonContext);
   const cardData = ctx?.cards || [];
   const [selected, setSelected] = useState(0);
@@ -152,7 +152,6 @@ const RewardsCashback = () => {
           </div>
         </div>
 
-        {/* Redemption Options */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-blue-400">
             <div className="flex items-center justify-between mb-4">
@@ -209,7 +208,6 @@ const RewardsCashback = () => {
           </div>
         </div>
 
-        {/* Redemption History */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Redemption History</h3>
           <div className="space-y-4">

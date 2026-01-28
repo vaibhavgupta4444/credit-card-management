@@ -1,7 +1,13 @@
 import { DollarSign, Gift, Activity, Shield } from "lucide-react";
-import type { FC } from "react";
+import { type FC } from "react";
+import type { QuickActionsProps } from "../../types/IQuickActions";
 
-const QuickActions: FC = () => (
+
+
+const QuickActions: FC<QuickActionsProps> = ({ card }) => {     
+
+
+return(
   <div className="bg-white rounded-2xl shadow-lg p-6">
     <h3 className="text-lg font-bold text-gray-900 mb-6">Quick Actions</h3>
     <div className="space-y-3">
@@ -23,6 +29,6 @@ const QuickActions: FC = () => (
       </button>
     </div>
   </div>
-);
+)};
 
 export default QuickActions;

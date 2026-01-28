@@ -1,12 +1,71 @@
 import { PieChart as RechartsPie, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 import { PieChart, Activity } from "lucide-react";
-import type { FC } from "react";
+import { useMemo, useContext, type FC } from "react";
+import { CommonContext } from "../../contexts/commonContext";
 import type { SpendingChartsProps } from "../../types/ICharts";
 
 
-const SpendingCharts: FC<SpendingChartsProps> = ({ spendingByCategory, monthlySpending }) => (
+const SpendingCharts: FC<SpendingChartsProps> = () => {
+  const ctx = useContext(CommonContext);
+  const transactions = ctx?.transactions || [];
+
+  const spendingByCategory = useMemo(() => {
+    const categoryColors: { [key: string]: string } = {
+      Shopping: "#3b82f6",
+      Food: "#10b981",
+      Travel: "#f59e0b",
+      Entertainment: "#8b5cf6",
+      Groceries: "#ef4444",
+      Apparel: "#ec4899",
+      Transport: "#14b8a6",
+      Utilities: "#f97316"
+    };
+
+    const categoryTotals = transactions
+      .filter(t => t.type === "debit" && t.category !== "Refund")
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      }, {} as { [key: string]: number });
+
+    return Object.entries(categoryTotals)
+      .map(([name, value]) => ({
+        name,
+        value,
+        color: categoryColors[name] || "#6b7280"
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+  }, [transactions]);
+
+  const monthlySpending = useMemo(() => {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyTotals: { [key: string]: number } = {};
+
+    transactions
+      .filter(t => t.type === "debit" && t.category !== "Refund")
+      .forEach(t => {
+        const date = new Date(t.date);
+        const monthYear = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        monthlyTotals[monthYear] = (monthlyTotals[monthYear] || 0) + t.amount;
+      });
+
+    const result = [];
+    const today = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthYear = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      result.push({
+        month: monthNames[date.getMonth()],
+        amount: monthlyTotals[monthYear] || 0
+      });
+    }
+
+    return result;
+  }, [transactions]);
+
+  return (
   <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-    {/* Spending by Category */}
     <div className="bg-white rounded-2xl shadow-lg p-6 lg:col-span-1">
       <div className="flex items-center gap-2 mb-6">
         <div className="bg-blue-100 p-2 rounded-lg">
@@ -47,8 +106,6 @@ const SpendingCharts: FC<SpendingChartsProps> = ({ spendingByCategory, monthlySp
         ))}
       </div>
     </div>
-
-    {/* Monthly Spending Trend */}
     <div className="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">
       <div className="flex items-center gap-2 mb-6">
         <div className="bg-indigo-100 p-2 rounded-lg">
@@ -91,6 +148,7 @@ const SpendingCharts: FC<SpendingChartsProps> = ({ spendingByCategory, monthlySp
       </ResponsiveContainer>
     </div>
   </div>
-);
+  );
+};
 
 export default SpendingCharts;

@@ -4,7 +4,6 @@ import { useState } from "react";
 const Navbar = ({ onSidebarToggle }: { onSidebarToggle?: () => void }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Dummy logout handler
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     setMenuOpen(false);

@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, type FC } from "react";
 import { CommonContext } from "../contexts/commonContext";
 import { CreditCard } from "lucide-react";
 import type { CardData } from "../types/Context";
 
-const CardControlsSecurity = () => {
+const CardControlsSecurity: FC = () => {
   const ctx = useContext(CommonContext);
   const cardData = ctx?.cards || [];
   const [selected, setSelected] = useState(0);

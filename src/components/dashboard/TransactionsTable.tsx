@@ -13,7 +13,6 @@ const TransactionsTable = ({
   filterCategory,
   onPageChange,
 }: TransactionsTableProps) => {
-  // Filter and search
   const filtered = useMemo(() => {
     let txns = transactions;
     if (search) {
@@ -32,7 +31,7 @@ const TransactionsTable = ({
     return txns;
   }, [transactions, search, filterType, filterCategory]);
 
-  // Pagination
+
   const total = filtered.length;
   const totalPages = Math.ceil(total / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -79,7 +78,6 @@ const TransactionsTable = ({
           )}
         </tbody>
       </table>
-      {/* Pagination Controls */}
       <div className="flex justify-between items-center mt-4">
         <div className="text-sm text-gray-600">
           Showing {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, total)} of {total}

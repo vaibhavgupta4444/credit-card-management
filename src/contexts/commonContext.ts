@@ -1,6 +1,7 @@
 import React, { createContext, useState } from "react";
 import type { CardData } from "../types/Context";
 import type { ExtendedCommonContextType, Transaction } from "../types/ITransactions";
+import type { BillHistory } from "../types/IBilling";
 
 export const CommonContext = createContext<ExtendedCommonContextType | null>(null);
 
@@ -29,13 +30,13 @@ export const CommonProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
   const transactions = generateTransactions(205);
 
-  // Card data with security fields included
+ 
   const [cards, setCards] = useState<CardData[]>([
     {
       id: 1,
       bank: "HDFC Bank",
       number: "1234 5678 9012 3456",
-      name: "Vaibhav Sharma",
+      name: "Vaibhav Gupta",
       expiry: "12/29",
       limit: 200000,
       used: 75000,
@@ -53,7 +54,7 @@ export const CommonProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       id: 2,
       bank: "SBI Card",
       number: "9876 5432 1098 7654",
-      name: "Vaibhav Sharma",
+      name: "Vaibhav Gupta",
       expiry: "08/28",
       limit: 150000,
       used: 40000,
@@ -69,13 +70,25 @@ export const CommonProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     },
   ]);
 
+  const [billHistory, setBillHistory] = useState<BillHistory[]>([
+    { id: 1, month: "Jan 2026", amount: 12000, dueDate: "2026-02-10", paidDate: "", status: "pending", minDue: 600 },
+    { id: 2, month: "Dec 2025", amount: 18500, dueDate: "2026-01-10", paidDate: "2026-01-08", status: "paid", minDue: 925 },
+    { id: 3, month: "Nov 2025", amount: 15200, dueDate: "2025-12-10", paidDate: "2025-12-09", status: "paid", minDue: 760 },
+    { id: 4, month: "Oct 2025", amount: 22000, dueDate: "2025-11-10", paidDate: "2025-11-12", status: "overdue", minDue: 1100 },
+    { id: 5, month: "Sep 2025", amount: 19800, dueDate: "2025-10-10", paidDate: "2025-10-07", status: "paid", minDue: 990 },
+  ]);
+
   const updateCard = (idx: number, updates: Partial<CardData>) => {
     setCards(prev => prev.map((card, i) => i === idx ? { ...card, ...updates } : card));
   };
 
+  const addBillHistory = (bill: BillHistory) => {
+    setBillHistory(prev => [bill, ...prev]);
+  };
+
   return React.createElement(
     CommonContext.Provider,
-    { value: { emailPattern, passwordPattern, transactions, cards, updateCard } },
+    { value: { emailPattern, passwordPattern, transactions, cards, updateCard, billHistory, addBillHistory } },
     children
   );
 };

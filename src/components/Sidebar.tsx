@@ -7,7 +7,6 @@ const links = [
   { to: "/billing", label: "Billing", icon: <Calendar className="w-5 h-5" /> },
   { to: "/rewards", label: "Rewards", icon: <Gift className="w-5 h-5" /> },
   { to: "/controls", label: "Card Controls", icon: <Shield className="w-5 h-5" /> },
-  // { to: "/profile", label: "Profile", icon: <User className="w-5 h-5" /> },
 ];
 
 const Sidebar = ({ open, onClose }: { open?: boolean; onClose?: () => void }) => {
@@ -19,7 +18,6 @@ const Sidebar = ({ open, onClose }: { open?: boolean; onClose?: () => void }) =>
         ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
     >
-      {/* Mobile close button */}
       <div className="flex items-center justify-between md:hidden h-16 px-4 border-b">
         <span className="font-bold text-blue-700 text-lg">Menu</span>
         <button onClick={onClose} className="p-2 rounded hover:bg-blue-100">

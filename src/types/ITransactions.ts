@@ -1,4 +1,5 @@
 import type { CommonContextType } from "./Context";
+import type { BillHistory } from "./IBilling";
 
 export interface TransactionsTableProps {
   transactions: Transaction[];
@@ -21,4 +22,11 @@ export interface Transaction {
 
 export interface ExtendedCommonContextType extends CommonContextType {
   transactions: Transaction[];
+  billHistory: BillHistory[];
+  addBillHistory: (bill: BillHistory) => void;
+}
+
+export interface RecentTransactionsProps {
+  transactions: Transaction[];
+  title?: string;
 }

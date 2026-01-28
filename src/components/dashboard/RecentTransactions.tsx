@@ -1,12 +1,9 @@
 
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import type { FC } from "react";
-import type { Transaction } from "../../types/ITransactions";
+import type { RecentTransactionsProps } from "../../types/ITransactions";   
 
-interface RecentTransactionsProps {
-  transactions: Transaction[];
-  title?: string;
-}
+
 
 const RecentTransactions: FC<RecentTransactionsProps> = ({ transactions, title = "Recent Transactions" }) => (
   <div className="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">

@@ -6,34 +6,17 @@ import QuickActions from "../components/dashboard/QuickActions";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
 import { CommonContext } from "../contexts/commonContext";
 
-const spendingByCategory = [
-  { name: "Shopping", value: 25000, color: "#3b82f6" },
-  { name: "Food & Dining", value: 18000, color: "#10b981" },
-  { name: "Travel", value: 15000, color: "#f59e0b" },
-  { name: "Entertainment", value: 10000, color: "#8b5cf6" },
-  { name: "Utilities", value: 7000, color: "#ef4444" },
-];
-
-const monthlySpending = [
-  { month: "Aug", amount: 45000 },
-  { month: "Sep", amount: 52000 },
-  { month: "Oct", amount: 48000 },
-  { month: "Nov", amount: 61000 },
-  { month: "Dec", amount: 55000 },
-  { month: "Jan", amount: 75000 },
-];
-
-
 const Dashboard: FC = () => {
   const ctx = useContext(CommonContext);
   const cardData = ctx?.cards || [];
+  const transactions = ctx?.transactions || [];
   const [selected, setSelected] = useState(0);
   const card = cardData[selected] || cardData[0];
   const utilizationPercent = card ? ((card.used / card.limit) * 100).toFixed(1) : "0";
-  const recentTransactions = ctx?.transactions
-    ?.slice()
+  const recentTransactions = transactions
+    .slice()
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5) || [];
+    .slice(0, 5);
 
   useEffect(() => {
     if (cardData.length > 0 && selected >= cardData.length && cardData[0].blocked === false) {
@@ -102,7 +85,7 @@ const Dashboard: FC = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
+ 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
             <div className="flex items-start justify-between mb-4">
@@ -204,13 +187,12 @@ const Dashboard: FC = () => {
           </div>
         </div>
 
-        {/* Charts Section */}
-        <SpendingCharts spendingByCategory={spendingByCategory} monthlySpending={monthlySpending} />
 
-        {/* Recent Transactions & Actions */}
+        <SpendingCharts />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <RecentTransactions transactions={recentTransactions} />
-          <QuickActions />
+          <QuickActions card={card} />
         </div>
       </div>
     </div>

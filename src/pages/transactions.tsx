@@ -1,13 +1,12 @@
 import { useContext, useState, useMemo } from "react";
 import { CommonContext } from "../contexts/commonContext";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
-import * as XLSX from "xlsx";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import { useExport } from "../hooks/useExport";
+import type { FC } from "react";
 
 const PAGE_SIZE = 12;
 
-const Transactions = () => {
+const Transactions: FC = () => {
     const ctx = useContext(CommonContext);
     const transactions = ctx?.transactions || [];
     const [search, setSearch] = useState("");
@@ -37,39 +36,26 @@ const Transactions = () => {
         return txns;
     }, [transactions, search, filterType, filterCategory]);
 
-    // Pagination
+
     const total = filtered.length;
     const totalPages = Math.ceil(total / PAGE_SIZE);
     const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-    const handleExportExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(filtered);
-        const workbook = XLSX.utils.book_new();
 
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
-        XLSX.writeFile(workbook, "transactions.xlsx");
-    };
+    const { handleExportExcel, handleExportPDF } = useExport(filtered, {
+        filename: "transactions",
+        sheetName: "Transactions",
+        title: "Transaction History",
+        columns: [
+            { header: "ID", key: "id" },
+            { header: "Merchant", key: "merchant" },
+            { header: "Category", key: "category" },
+            { header: "Date", key: "date" },
+            { header: "Type", key: "type", formatter: (val) => val.toUpperCase() },
+            { header: "Amount", key: "amount", formatter: (val) => `₹${val.toLocaleString()}` }
+        ]
+    });
 
-    // Export to PDF
-    const handleExportPDF = () => {
-        const doc = new jsPDF();
-
-        const tableBody = filtered.map(t => [
-            t.id,
-            t.merchant,
-            t.category,
-            t.date,
-            t.type,
-            t.amount,
-        ]);
-
-        autoTable(doc, {
-            head: [["#", "Merchant", "Category", "Date", "Type", "Amount"]],
-            body: tableBody,
-        });
-
-        doc.save("transactions.pdf");
-    };
 
     return (
         <div className="mx-auto py-8 px-4 bg-white">

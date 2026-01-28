@@ -9,7 +9,4 @@ export interface MonthlyData {
   amount: number;
 }
 
-export interface SpendingChartsProps {
-  spendingByCategory: CategoryData[];
-  monthlySpending: MonthlyData[];
-}
+export interface SpendingChartsProps {}
