@@ -4,7 +4,7 @@ import type { QuickActionsProps } from "../../types/IQuickActions";
 
 
 
-const QuickActions: FC<QuickActionsProps> = ({ card }) => {     
+const QuickActions: FC<QuickActionsProps> = () => {     
 
 
 return(

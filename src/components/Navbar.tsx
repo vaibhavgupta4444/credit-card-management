@@ -1,12 +1,15 @@
 import { User, Menu, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const Navbar = ({ onSidebarToggle }: { onSidebarToggle?: () => void }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     setMenuOpen(false);
+    navigate("/signin");
   };
 
   return (
@@ -26,8 +29,6 @@ const Navbar = ({ onSidebarToggle }: { onSidebarToggle?: () => void }) => {
         {/* <span className="hidden sm:block text-sm text-gray-600 font-medium">Vaibhav</span> */}
         <div
           className="relative"
-          onMouseEnter={() => setMenuOpen(true)}
-          onMouseLeave={() => setMenuOpen(false)}
         >
           <button
             className="focus:outline-none"
