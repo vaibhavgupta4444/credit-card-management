@@ -45,7 +45,7 @@ const App: FC = () => {
           />
         )}
 
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto transition-all duration-300">
+        <main className="flex-1 overflow-y-auto transition-all duration-300">
           <Outlet />
         </main>
       </div>

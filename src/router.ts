@@ -8,11 +8,7 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import NotFoundPage from "./pages/NotFound";
 import { ProtectedRoute, PublicRoute } from "./ProtectedRoute";
-// import Transactions from "./pages/Transactions";
-// import Billing from "./pages/Billing";
-// import Rewards from "./pages/Rewards";
-// import CardControls from "./pages/CardControls";
-// import Profile from "./pages/Profile";
+import Transactions from "./pages/transactions";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +33,7 @@ const router = createBrowserRouter([
         Component: ProtectedRoute,
         children: [
           { index: true, Component: Dashboard },
+          { path: "/transactions", Component: Transactions },
         ],
       },
     ],

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { X, CreditCard, List, Calendar, Gift, Shield, User } from "lucide-react";
+import { X, CreditCard, List, Calendar, Gift, Shield } from "lucide-react";
 
 const links = [
   { to: "/", label: "Dashboard", icon: <CreditCard className="w-5 h-5" /> },
@@ -7,7 +7,7 @@ const links = [
   { to: "/billing", label: "Billing", icon: <Calendar className="w-5 h-5" /> },
   { to: "/rewards", label: "Rewards", icon: <Gift className="w-5 h-5" /> },
   { to: "/controls", label: "Card Controls", icon: <Shield className="w-5 h-5" /> },
-  { to: "/profile", label: "Profile", icon: <User className="w-5 h-5" /> },
+  // { to: "/profile", label: "Profile", icon: <User className="w-5 h-5" /> },
 ];
 
 const Sidebar = ({ open, onClose }: { open?: boolean; onClose?: () => void }) => {

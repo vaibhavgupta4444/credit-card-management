@@ -1,22 +1,16 @@
+
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import type { FC } from "react";
-
-interface Transaction {
-  id: number;
-  merchant: string;
-  amount: number;
-  date: string;
-  category: string;
-  type: "debit" | "credit";
-}
+import type { Transaction } from "../../contexts/commonContext";
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
+  title?: string;
 }
 
-const RecentTransactions: FC<RecentTransactionsProps> = ({ transactions }) => (
+const RecentTransactions: FC<RecentTransactionsProps> = ({ transactions, title = "Recent Transactions" }) => (
   <div className="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">
-    <h3 className="text-lg font-bold text-gray-900 mb-6">Recent Transactions</h3>
+    <h3 className="text-lg font-bold text-gray-900 mb-6">{title}</h3>
     <div className="space-y-3">
       {transactions.map((txn) => (
         <div key={txn.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">

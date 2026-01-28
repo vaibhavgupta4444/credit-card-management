@@ -1,9 +1,10 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { CreditCard, Gift, Calendar, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import SpendingCharts from "../components/dashboard/SpendingCharts";
 import QuickActions from "../components/dashboard/QuickActions";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
+import { CommonContext } from "../contexts/commonContext";
 
 const cardData = [
   {
@@ -51,25 +52,17 @@ const monthlySpending = [
   { month: "Jan", amount: 75000 },
 ];
 
-const recentTransactions: {
-  id: number;
-  merchant: string;
-  amount: number;
-  date: string;
-  category: string;
-  type: "debit" | "credit";
-}[] = [
-  { id: 1, merchant: "Amazon India", amount: 2499, date: "Jan 27", category: "Shopping", type: "debit" },
-  { id: 2, merchant: "Swiggy", amount: 850, date: "Jan 26", category: "Food", type: "debit" },
-  { id: 3, merchant: "Cash Refund", amount: 1200, date: "Jan 25", category: "Refund", type: "credit" },
-  { id: 4, merchant: "BookMyShow", amount: 600, date: "Jan 24", category: "Entertainment", type: "debit" },
-  { id: 5, merchant: "Uber", amount: 340, date: "Jan 23", category: "Travel", type: "debit" },
-];
 
 const Dashboard: FC = () => {
   const [selected, setSelected] = useState(0);
   const card = cardData[selected];
   const utilizationPercent = ((card.used / card.limit) * 100).toFixed(1);
+  const ctx = useContext(CommonContext);
+  // Filter top 5 recent transactions by date (descending)
+  const recentTransactions = ctx?.transactions
+    ?.slice()
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5) || [];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-indigo-50">
