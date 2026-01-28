@@ -2,6 +2,7 @@ import { useState, useContext, useMemo, type FC } from "react";
 import { CommonContext } from "../contexts/commonContext";
 import { CreditCard, Calendar, DollarSign, CheckCircle, Clock, AlertCircle, X, Download } from "lucide-react";
 import { useExport } from "../hooks/useExport";
+import { toast } from "react-toastify";
 import type { BillHistory } from "../types/IBilling";
 
 const BillingPayments: FC = () => {
@@ -57,17 +58,17 @@ const BillingPayments: FC = () => {
 
         const amount = paymentAmount;
         if (isNaN(amount) || amount <= 0) {
-            alert("Please enter a valid amount");
+            toast.error("Please enter a valid amount");
             return;
         }
         const minRequired = currentCard.outstanding * 0.05;
         if (amount < minRequired) {
-            alert(`Minimum payment of ₹${minRequired.toFixed(0)} is required`);
+            toast.error(`Minimum payment of ₹${minRequired.toFixed(0)} is required`);
             return;
         }
 
         if (amount > currentCard.outstanding) {
-            alert("Payment amount cannot exceed outstanding balance");
+            toast.error("Payment amount cannot exceed outstanding balance");
             return;
         }
         
@@ -90,7 +91,7 @@ const BillingPayments: FC = () => {
         setShowPaymentModal(false);
         setPaymentAmount(0);
 
-        alert(`Payment of ₹${amount.toLocaleString()} processed successfully!`);
+        toast.success(`Payment of ₹${amount.toLocaleString()} processed successfully!`);
     };
 
     if (!cardData.length) return null;
@@ -144,7 +145,6 @@ const BillingPayments: FC = () => {
                     </div>
                 </div>
 
-                {/* Current Bill Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
                         <div className="flex items-start justify-between mb-4">

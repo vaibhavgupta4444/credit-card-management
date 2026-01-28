@@ -2,6 +2,7 @@ import React, { createContext, useState } from "react";
 import type { CardData } from "../types/Context";
 import type { ExtendedCommonContextType, Transaction } from "../types/ITransactions";
 import type { BillHistory } from "../types/IBilling";
+import type { RedemptionHistory } from "../types/IRedeem";
 
 export const CommonContext = createContext<ExtendedCommonContextType | null>(null);
 
@@ -78,6 +79,14 @@ export const CommonProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     { id: 5, month: "Sep 2025", amount: 19800, dueDate: "2025-10-10", paidDate: "2025-10-07", status: "paid", minDue: 990 },
   ]);
 
+  const [redemptionHistory, setRedemptionHistory] = useState<RedemptionHistory[]>([
+    { id: 1, date: "2026-01-20", description: "Shopping cashback", points: 250, type: "earned" },
+    { id: 2, date: "2026-01-15", description: "Bill payment reward", points: 150, type: "earned" },
+    { id: 3, date: "2026-01-10", description: "Redeemed for Amazon Voucher", points: -500, type: "redeemed" },
+    { id: 4, date: "2026-01-05", description: "Travel booking bonus", points: 300, type: "earned" },
+    { id: 5, date: "2025-12-28", description: "Fuel cashback", points: 100, type: "earned" },
+  ]);
+
   const updateCard = (idx: number, updates: Partial<CardData>) => {
     setCards(prev => prev.map((card, i) => i === idx ? { ...card, ...updates } : card));
   };
@@ -86,9 +95,13 @@ export const CommonProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setBillHistory(prev => [bill, ...prev]);
   };
 
+  const addRedemption = (redemption: RedemptionHistory) => {
+    setRedemptionHistory(prev => [redemption, ...prev]);
+  };
+
   return React.createElement(
     CommonContext.Provider,
-    { value: { emailPattern, passwordPattern, transactions, cards, updateCard, billHistory, addBillHistory } },
+    { value: { emailPattern, passwordPattern, transactions, cards, updateCard, billHistory, addBillHistory, redemptionHistory, addRedemption } },
     children
   );
 };

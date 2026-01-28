@@ -1,11 +1,13 @@
 import { useState, useContext, type FC } from "react";
 import { CommonContext } from "../contexts/commonContext";
 import { CreditCard, Gift, TrendingUp, ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
+import { toast } from "react-toastify";
 import type { RedemptionHistory } from "../types/IRedeem";
 
 const RewardsCashback: FC = () => {
   const ctx = useContext(CommonContext);
   const cardData = ctx?.cards || [];
+  const redemptionHistory = ctx?.redemptionHistory || [];
   const [selected, setSelected] = useState(0);
   const currentCard = cardData[selected];
 
@@ -19,24 +21,26 @@ const RewardsCashback: FC = () => {
 
   const totalCashback = 2450;
 
-  const redemptionHistory: RedemptionHistory[] = [
-    { id: 1, date: "2026-01-25", description: "Shopping at Amazon", points: 150, type: "earned" },
-    { id: 2, date: "2026-01-20", description: "Redeemed for Amazon Voucher", points: -500, type: "redeemed" },
-    { id: 3, date: "2026-01-15", description: "Dining at Swiggy", points: 80, type: "earned" },
-    { id: 4, date: "2026-01-10", description: "Travel booking", points: 200, type: "earned" },
-    { id: 5, date: "2026-01-05", description: "Redeemed for Statement Credit", points: -300, type: "redeemed" },
-    { id: 6, date: "2025-12-28", description: "Shopping at Flipkart", points: 120, type: "earned" },
-    { id: 7, date: "2025-12-20", description: "Fuel purchase", points: 60, type: "earned" },
-  ];
-
   const handleRedeem = (pointsRequired: number, rewardName: string) => {
-    if (!currentCard || !ctx?.updateCard) return;
+    if (!currentCard || !ctx?.updateCard || !ctx?.addRedemption) return;
     
     if (currentCard.rewards >= pointsRequired) {
+      // Deduct points
       ctx.updateCard(selected, { rewards: currentCard.rewards - pointsRequired });
-      alert(`Successfully redeemed ${pointsRequired} points for ${rewardName}!`);
+      
+      // Add redemption to history
+      const newRedemption: RedemptionHistory = {
+        id: redemptionHistory.length + 1,
+        date: new Date().toISOString().split('T')[0],
+        description: `Redeemed for ${rewardName}`,
+        points: -pointsRequired,
+        type: "redeemed"
+      };
+      ctx.addRedemption(newRedemption);
+      
+      toast.success(`Successfully redeemed ${pointsRequired} points for ${rewardName}!`);
     } else {
-      alert(`Insufficient points! You need ${pointsRequired} points but have ${currentCard.rewards} points.`);
+      toast.error(`Insufficient points! You need ${pointsRequired} points but have ${currentCard.rewards} points.`);
     }
   };
 
@@ -45,7 +49,6 @@ const RewardsCashback: FC = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        <h1 className="text-2xl font-bold text-blue-700">Rewards & Cashback</h1>
         
         <div className="overflow-x-auto pb-4">
           <div className="flex gap-6 min-w-fit">

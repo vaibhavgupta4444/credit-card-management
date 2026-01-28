@@ -1,5 +1,6 @@
 import type { CommonContextType } from "./Context";
 import type { BillHistory } from "./IBilling";
+import type { RedemptionHistory } from "./IRedeem";
 
 export interface TransactionsTableProps {
   transactions: Transaction[];
@@ -24,6 +25,8 @@ export interface ExtendedCommonContextType extends CommonContextType {
   transactions: Transaction[];
   billHistory: BillHistory[];
   addBillHistory: (bill: BillHistory) => void;
+  redemptionHistory: RedemptionHistory[];
+  addRedemption: (redemption: RedemptionHistory) => void;
 }
 
 export interface RecentTransactionsProps {
