@@ -1,39 +1,10 @@
 import type { FC } from "react";
-import { useState, useContext } from "react";
-import { CreditCard, Gift, Calendar, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useState, useContext, useEffect } from "react";
+import { CreditCard, Gift, Calendar, DollarSign, TrendingUp, ArrowUpRight, ArrowDownRight, Shield } from "lucide-react";
 import SpendingCharts from "../components/dashboard/SpendingCharts";
 import QuickActions from "../components/dashboard/QuickActions";
 import RecentTransactions from "../components/dashboard/RecentTransactions";
 import { CommonContext } from "../contexts/commonContext";
-
-const cardData = [
-  {
-    id: 1,
-    bank: "HDFC Bank",
-    number: "1234 5678 9012 3456",
-    name: "Vaibhav Sharma",
-    expiry: "12/29",
-    limit: 200000,
-    used: 75000,
-    outstanding: 12000,
-    dueDate: "2026-02-10",
-    rewards: 3200,
-    color: "from-blue-500 to-indigo-600"
-  },
-  {
-    id: 2,
-    bank: "SBI Card",
-    number: "9876 5432 1098 7654",
-    name: "Vaibhav Sharma",
-    expiry: "08/28",
-    limit: 150000,
-    used: 40000,
-    outstanding: 8000,
-    dueDate: "2026-02-15",
-    rewards: 2100,
-    color: "from-purple-500 to-pink-500"
-  },
-];
 
 const spendingByCategory = [
   { name: "Shopping", value: 25000, color: "#3b82f6" },
@@ -54,15 +25,24 @@ const monthlySpending = [
 
 
 const Dashboard: FC = () => {
-  const [selected, setSelected] = useState(0);
-  const card = cardData[selected];
-  const utilizationPercent = ((card.used / card.limit) * 100).toFixed(1);
   const ctx = useContext(CommonContext);
-  // Filter top 5 recent transactions by date (descending)
+  const cardData = ctx?.cards || [];
+  const [selected, setSelected] = useState(0);
+  const card = cardData[selected] || cardData[0];
+  const utilizationPercent = card ? ((card.used / card.limit) * 100).toFixed(1) : "0";
   const recentTransactions = ctx?.transactions
     ?.slice()
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5) || [];
+
+  useEffect(() => {
+    if (cardData.length > 0 && selected >= cardData.length && cardData[0].blocked === false) {
+      setSelected(0);
+    }else if (cardData.length > 0 && cardData[selected]?.blocked) {
+      const firstUnblockedIndex = cardData.findIndex(c => !c.blocked);
+      setSelected(firstUnblockedIndex !== -1 ? firstUnblockedIndex : 0);
+    } 
+  }, [cardData, selected]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-indigo-50">
@@ -78,7 +58,7 @@ const Dashboard: FC = () => {
         </div>
         <div className="overflow-x-auto pb-4">
           <div className="flex gap-6 min-w-fit">
-            {cardData.map((c, idx) => (
+            {cardData.map((c, idx) => ( !c.blocked &&
               <div
                 key={c.id}
                 className={`relative min-w-95 h-56 rounded-3xl cursor-pointer transition-all duration-300 ${
@@ -89,7 +69,7 @@ const Dashboard: FC = () => {
                 onClick={() => setSelected(idx)}
                 style={{ flex: "0 0 380px" }}
               >
-                <div className={`absolute inset-0 rounded-3xl bg-linear-to-br ${c.color} opacity-90`} />
+                <div className={`absolute inset-0 rounded-3xl bg-linear-to-br ${c.blocked ? 'bg-gray-400 opacity-50' : `${c.color} opacity-90` } `} />
                 <div className="absolute inset-0 rounded-3xl backdrop-blur-3xl bg-white/10" />
                 
                 <div className="relative z-10 h-full flex flex-col justify-between p-7 text-white">
@@ -182,6 +162,45 @@ const Dashboard: FC = () => {
             <div className="text-gray-500 text-sm mb-1">This Month</div>
             <div className="text-3xl font-bold text-gray-900">₹{(card.used / 1000).toFixed(0)}K</div>
             <div className="text-xs text-gray-500 mt-4">vs last month ₹67K</div>
+          </div>
+        </div>
+
+        {/* Spending Limits */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-orange-100 p-3 rounded-xl">
+                <Shield className="w-6 h-6 text-orange-600" />
+              </div>
+              <span className="text-xs text-gray-500">Security</span>
+            </div>
+            <div className="text-gray-500 text-sm mb-1">Daily Spending Limit</div>
+            <div className="text-3xl font-bold text-gray-900">₹{(card?.dailyLimit || 0).toLocaleString()}</div>
+            <div className="mt-4 w-full bg-gray-100 rounded-full h-2.5">
+              <div
+                className="bg-linear-to-r from-orange-500 to-orange-600 h-2.5 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min((card.used / card.dailyLimit) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="text-xs text-gray-400 mt-2">Updated from Card Controls</div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-teal-100 p-3 rounded-xl">
+                <Shield className="w-6 h-6 text-teal-600" />
+              </div>
+              <span className="text-xs text-gray-500">Security</span>
+            </div>
+            <div className="text-gray-500 text-sm mb-1">Monthly Spending Limit</div>
+            <div className="text-3xl font-bold text-gray-900">₹{(card?.monthlyLimit || 0).toLocaleString()}</div>
+            <div className="mt-4 w-full bg-gray-100 rounded-full h-2.5">
+              <div
+                className="bg-linear-to-r from-teal-500 to-teal-600 h-2.5 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min((card.used / card.monthlyLimit) * 100, 100)}%` }}
+              />
+            </div>
+            <div className="text-xs text-gray-400 mt-2">Updated from Card Controls</div>
           </div>
         </div>
 

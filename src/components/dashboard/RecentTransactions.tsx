@@ -1,7 +1,7 @@
 
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import type { FC } from "react";
-import type { Transaction } from "../../contexts/commonContext";
+import type { Transaction } from "../../types/ITransactions";
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
